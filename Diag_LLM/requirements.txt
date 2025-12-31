@@ -1,10 +1,20 @@
+# Core
+python-dotenv
+
+# Streamlit UI
+streamlit
+
+# LangChain core
 langchain>=0.2.3
 langchain-community>=0.2.3
 langchain-openai>=0.1.8
 langchain-text-splitters>=0.2.0
-langgraph>=0.1.15
-langsmith>=0.1.40
+
+# Vector DB
 faiss-cpu
+
+# PDF ingestion
 pypdf
-streamlit
-google-search-results
+
+# Web search (DuckDuckGo)
+duckduckgo-search
