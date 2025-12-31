@@ -12,11 +12,19 @@ from langchain_community.tools import DuckDuckGoSearchRun
 # Load embeddings + FAISS
 embeddings = OpenAIEmbeddings()
 
-db = FAISS.load_local(
-    "faiss_diagnostics",
-    embeddings,
-    allow_dangerous_deserialization=True
-)
+def get_retriever():
+    try:
+        db = FAISS.load_local(
+            "faiss_diagnostics",
+            embeddings,
+            allow_dangerous_deserialization=True
+        )
+        return db.as_retriever(search_kwargs={"k": 4})
+    except Exception as e:
+        raise RuntimeError(
+            "FAISS index not found. Please upload PDFs before querying."
+        )
+
 
 retriever = db.as_retriever(search_kwargs={"k": 4})
 
@@ -32,6 +40,7 @@ def research_agent(question: str) -> str:
     """Diagnostics research agent using FAISS + Web + LLM"""
 
     # 1️⃣ Retrieve from FAISS
+    retriever = get_retriever()
     docs = retriever.invoke(question)
 
     pdf_context = "\n".join(d.page_content for d in docs)
@@ -61,3 +70,4 @@ Answer clearly and accurately.
 """
 
     return llm.invoke(prompt).content
+
